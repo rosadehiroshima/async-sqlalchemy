@@ -5,31 +5,37 @@
 
 ```
 
-[ API / PRODUCER ] (Receives CVs)
-       |
-       v
-(Queue 1: Raw Data) <---------------+
-       |                            |
-       v                            | (Backpressure limits 
-[ WORKER 1: VALIDATOR ]             |  flow if downstream 
-       |                            |  is too slow)
-       +---(Invalid)---+            |
-       |               v            |
-       |     [ DEAD LETTER QUEUE ]  |
-       |               |            |
-       v (Valid)       v (Logs)     |
-(Queue 2: Valid Data) <-------------+
-       |                            |
-       v                            |
-[ WORKER 2: PARSER ] (Heavy CPU)    |
-       |                            |
-       v (Extracted Data)           |
-(Queue 3: Batch Buffer) <-----------+
-       |
-       v
-[ WORKER 3: BATCH INSERTER ] (Time or Size Trigger)
-       |
-       v (Bulk Insert - 1 Transaction)
-[    DATABASE (PostgreSQL)    ]
 
+      [ ENVIRONMENT 1: FASTAPI APPLICATION ]
+      (Handles HTTP, scales via Uvicorn/Gunicorn)
+
+ HTTP POST /ingest
+        |
+        v
+ +--------------+     DI via FastAPI Depends()
+ |  Endpoint    | <------------------------- [ Broker Client ]
+ +--------------+                              (Redis/Kafka)
+        |                                           |
+        | Push (Fire & Forget)                      |
+        v                                           |
+ +----------------------------------------+         |
+ |             MESSAGE BROKER             | <-------+
+ +----------------------------------------+         |
+        |                                           |
+        | Pull (Consumer Group)                     |
+        v                                           |
+      [ ENVIRONMENT 2: BACKGROUND WORKER ]          |
+      (Standalone asyncio loop, scales separately)  |
+                                                    |
+ +--------------+     DI via Class Constructor      |
+ | Worker Class | <------------------------- [ Broker Client ]
+ +--------------+
+        |             DI via Class Constructor
+        | <------------------------- [ DB SessionFactory ]
+        |                              (SQLAlchemy)
+        | Bulk Insert
+        v
+ +----------------------------------------+
+ |         DATABASE (PostgreSQL)          |
+ +----------------------------------------+
 ```
