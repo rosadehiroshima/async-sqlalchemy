@@ -1,8 +1,3 @@
-- Não vamos abrir uma sessão para cada dado que deverá ser inderido no banco
-- Focar em fazer sempre bulk-insert's, ou seja, insert de batches ao invés de inserts individuais
-- Usar Asyncio (ou Redis) para implementar sistema de Queue para armazenar lotes que estão na fila
-
-
 ```
 
 
