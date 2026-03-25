@@ -1,11 +1,16 @@
+version: '3.8'
+
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: asyncpg
-    restart: always
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pwd
-      POSTGRES_DB: asyncio
+  redis:
+    image: redis:7-alpine
     ports:
-      - 5432:5432
+      - "6379:6379"
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: analytics
+    ports:
+      - "5432:5432"
