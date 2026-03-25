@@ -2,8 +2,12 @@
 
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from settings import get_settings
+
+settings = get_settings()
+
 engine = create_async_engine(
-    "postgresql+asyncpg://user:pwd@5432/asyncio",
+    f"postgresql+asyncpg://{settings.db_user}:{settings.db_password}@5432/{settings.db}",
     pool_size=20,
     max_overflow=10,
     pool_timeout=30,
