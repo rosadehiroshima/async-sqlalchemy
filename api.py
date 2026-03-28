@@ -1,9 +1,18 @@
+import json
+import uuid
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+import stream
+
 import structlog
 from fastapi import FastAPI
+from fastapi.responses import Response
+from starlette.status import HTTP_202_ACCEPTED
 
+from settings import get_settings
+
+settings = get_settings()
 log = structlog.get_logger()
 
 
@@ -17,9 +26,16 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.post("/curriculum")
+async def root(curriculum: str):
+
+
+
+
+# @app.get("/curriculum/status/{curriculum_id}")
+# async def status(curriculum_id: str):
+#     result = r.xpending("curriculums", curriculum_id)
+#     print(result)
 
 
 if __name__ == "__main__":

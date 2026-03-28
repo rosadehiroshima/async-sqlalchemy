@@ -34,3 +34,10 @@
  |         DATABASE (PostgreSQL)          |
  +----------------------------------------+
 ```
+
+
+# TODO
+
+- [ ] D.I. via FastAPI para o client Redis
+- [ ] Usar Depends para delegar 'a rota o gerenciamento da sessao
+- [ ] Montar funcionamento de engines redis para uso tanto do worker tanto da API
